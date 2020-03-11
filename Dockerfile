@@ -14,7 +14,8 @@ RUN apt-get -y install \
     git \
     libhdf5-dev \
     software-properties-common \
-    openssl
+    openssl \
+    libssl-dev
 
 # Fix 'sudo: command not found'
 # https://github.com/torch/distro/blob/master/install-deps contains 'sudo', but nvidia:cuda removed sudo: https://github.com/crisbal/docker-torch-rnn/issues/9#issuecomment-365362656
