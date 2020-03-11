@@ -1,0 +1,13 @@
+stages:
+  - docker
+
+build_image:
+  stage: docker
+  tags:
+    - docker-image-build
+  script:
+    - echo "Building image"
+  variables:
+    TO: gitlab-registry.cern.ch/iconnell/torch-rnn-docker-for-singularity
+    DOCKER_FILE: Dockerfile
+
