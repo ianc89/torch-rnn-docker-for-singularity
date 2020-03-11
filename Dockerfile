@@ -25,27 +25,27 @@ ENV TORCH_NVCC_FLAGS='-D__CUDA_NO_HALF_OPERATORS__'
 
 # Fix torch installation 1 ( https://github.com/torch/cutorch/issues/834 )
 RUN apt-get purge cmake
-RUN git clone https://github.com/Kitware/CMake.git /home/cmake
-RUN cd /home/cmake && ./bootstrap && make && sudo make install
+RUN git clone https://github.com/Kitware/CMake.git /root/cmake
+RUN cd /root/cmake && ./bootstrap && make && sudo make install
 
 
 # Torch and luarocks
-RUN git clone https://github.com/torch/distro.git /home/torch --recursive
+RUN git clone https://github.com/torch/distro.git /root/torch --recursive
 # Fix torch installation 2
-RUN rm -fr /home/torch/cmake/3.6/Modules/FindCUDA*
-COPY atomic.patch /home/torch/extra/cutorch/atomic.patch
-RUN cd /home/torch/extra/cutorch/ && patch -p1 < /home/torch/extra/cutorch/atomic.patch
+RUN rm -fr /root/torch/cmake/3.6/Modules/FindCUDA*
+COPY atomic.patch /root/torch/extra/cutorch/atomic.patch
+RUN cd /root/torch/extra/cutorch/ && patch -p1 < /root/torch/extra/cutorch/atomic.patch
 # Fix error in ubuntu 18.04 ( https://github.com/torch/torch7/issues/1146 )
-RUN sed -i 's/python-software-properties/software-properties-common/g' /home/torch/install-deps
-RUN cd /home/torch && ./clean.sh && bash install-deps && ./install.sh -b
+RUN sed -i 's/python-software-properties/software-properties-common/g' /root/torch/install-deps
+RUN cd /root/torch && ./clean.sh && bash install-deps && ./install.sh -b
 
 
-ENV LUA_PATH='/home/.luarocks/share/lua/5.1/?.lua;/home/.luarocks/share/lua/5.1/?/init.lua;/home/torch/install/share/lua/5.1/?.lua;/home/torch/install/share/lua/5.1/?/init.lua;./?.lua;/home/torch/install/share/luajit-2.1.0-beta1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua'
-ENV LUA_CPATH='/home/.luarocks/lib/lua/5.1/?.so;/home/torch/install/lib/lua/5.1/?.so;./?.so;/usr/local/lib/lua/5.1/?.so;/usr/local/lib/lua/5.1/loadall.so'
-ENV PATH=/home/torch/install/bin:$PATH
-ENV LD_LIBRARY_PATH=/home/torch/install/lib:$LD_LIBRARY_PATH
-ENV DYLD_LIBRARY_PATH=/home/torch/install/lib:$DYLD_LIBRARY_PATH
-ENV LUA_CPATH='/home/torch/install/lib/?.so;'$LUA_CPATH
+ENV LUA_PATH='/root/.luarocks/share/lua/5.1/?.lua;/root/.luarocks/share/lua/5.1/?/init.lua;/root/torch/install/share/lua/5.1/?.lua;/root/torch/install/share/lua/5.1/?/init.lua;./?.lua;/root/torch/install/share/luajit-2.1.0-beta1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua'
+ENV LUA_CPATH='/root/.luarocks/lib/lua/5.1/?.so;/root/torch/install/lib/lua/5.1/?.so;./?.so;/usr/local/lib/lua/5.1/?.so;/usr/local/lib/lua/5.1/loadall.so'
+ENV PATH=/root/torch/install/bin:$PATH
+ENV LD_LIBRARY_PATH=/root/torch/install/lib:$LD_LIBRARY_PATH
+ENV DYLD_LIBRARY_PATH=/root/torch/install/lib:$DYLD_LIBRARY_PATH
+ENV LUA_CPATH='/root/torch/install/lib/?.so;'$LUA_CPATH
 
 #torch-rnn and python requirements
 WORKDIR /home
