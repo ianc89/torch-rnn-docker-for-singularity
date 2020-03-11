@@ -36,6 +36,7 @@ RUN git clone https://github.com/torch/distro.git /root/torch --recursive
 # Fix torch installation 2
 RUN rm -fr /root/torch/cmake/3.6/Modules/FindCUDA*
 COPY atomic.patch /root/torch/extra/cutorch/atomic.patch
+RUN cat /root/torch/extra/cutorch/atomic.patch
 RUN cd /root/torch/extra/cutorch/ && patch -p1 < /root/torch/extra/cutorch/atomic.patch
 # Fix error in ubuntu 18.04 ( https://github.com/torch/torch7/issues/1146 )
 RUN sed -i 's/python-software-properties/software-properties-common/g' /root/torch/install-deps
