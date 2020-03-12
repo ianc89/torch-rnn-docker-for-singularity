@@ -33,16 +33,17 @@ RUN cd /home/cmake && ./bootstrap --prefix=/home/bin && make && sudo make instal
 
 
 # Torch and luarocks
-RUN git clone https://github.com/torch/distro.git /home/torch --recursive
+#RUN git clone https://github.com/torch/distro.git /home/torch --recursive
+RUN git clone https://github.com/nagadomi/distro.git /home/torch --recursive
 # Fix torch installation 2
-RUN rm -fr /home/torch/cmake/3.6/Modules/FindCUDA*
-COPY atomic.patch /home/torch/extra/cutorch/atomic.patch
-RUN cat /home/torch/extra/cutorch/atomic.patch
-RUN cd /home/torch/extra/cutorch/ && patch -p1 < /home/torch/extra/cutorch/atomic.patch
+#RUN rm -fr /home/torch/cmake/3.6/Modules/FindCUDA*
+#COPY atomic.patch /home/torch/extra/cutorch/atomic.patch
+#RUN cat /home/torch/extra/cutorch/atomic.patch
+#RUN cd /home/torch/extra/cutorch/ && patch -p1 < /home/torch/extra/cutorch/atomic.patch
 # Fix error in ubuntu 18.04 ( https://github.com/torch/torch7/issues/1146 )
-RUN sed -i 's/python-software-properties/software-properties-common/g' /home/torch/install-deps
-ENV TORCH_NVCC_FLAGS="-D__CUDA_NO_HALF_OPERATORS__"
-RUN cd /home/torch && bash install-deps && ./clean.sh && ./update.sh && ./install.sh -b
+#RUN sed -i 's/python-software-properties/software-properties-common/g' /home/torch/install-deps
+#ENV TORCH_NVCC_FLAGS="-D__CUDA_NO_HALF_OPERATORS__"
+RUN cd /home/torch && clean.sh && bash install-deps  && ./install.sh -b
 
 ENV LUA_PATH='/home/.luarocks/share/lua/5.1/?.lua;/home/.luarocks/share/lua/5.1/?/init.lua;/home/torch/install/share/lua/5.1/?.lua;/home/torch/install/share/lua/5.1/?/init.lua;./?.lua;/home/torch/install/share/luajit-2.1.0-beta1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua'
 ENV LUA_CPATH='/home/.luarocks/lib/lua/5.1/?.so;/home/torch/install/lib/lua/5.1/?.so;./?.so;/usr/local/lib/lua/5.1/?.so;/usr/local/lib/lua/5.1/loadall.so'
