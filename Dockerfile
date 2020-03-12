@@ -85,7 +85,7 @@ RUN luarocks make hdf5-0-0.rockspec
 #CUDA
 WORKDIR /home
 # Fix torch installation 3
-RUN cd /home/torch/extra/cutorch/ && luarocks make rocks/cutorch-scm-1.rockspec
+RUN cd /root/torch/extra/cutorch/ && luarocks make rocks/cutorch-scm-1.rockspec
 #RUN luarocks install cutorch
 RUN luarocks install cunn
 
