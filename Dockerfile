@@ -42,8 +42,7 @@ RUN cd /home/torch/extra/cutorch/ && patch -p1 < /home/torch/extra/cutorch/atomi
 # Fix error in ubuntu 18.04 ( https://github.com/torch/torch7/issues/1146 )
 RUN sed -i 's/python-software-properties/software-properties-common/g' /home/torch/install-deps
 # This tends to print too many warnings for the logging so lets just try and squash them
-RUN cd /home/torch && ./clean.sh && bash install-deps && ./install.sh -b >/dev/null 2>&1
-
+RUN cd /home/torch && ./clean.sh && bash install-deps && ./install.sh -b
 
 ENV LUA_PATH='/home/.luarocks/share/lua/5.1/?.lua;/home/.luarocks/share/lua/5.1/?/init.lua;/home/torch/install/share/lua/5.1/?.lua;/home/torch/install/share/lua/5.1/?/init.lua;./?.lua;/home/torch/install/share/luajit-2.1.0-beta1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua'
 ENV LUA_CPATH='/home/.luarocks/lib/lua/5.1/?.so;/home/torch/install/lib/lua/5.1/?.so;./?.so;/usr/local/lib/lua/5.1/?.so;/usr/local/lib/lua/5.1/loadall.so'
