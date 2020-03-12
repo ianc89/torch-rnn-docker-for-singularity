@@ -41,7 +41,7 @@ RUN cat /home/torch/extra/cutorch/atomic.patch
 RUN cd /home/torch/extra/cutorch/ && patch -p1 < /home/torch/extra/cutorch/atomic.patch
 # Fix error in ubuntu 18.04 ( https://github.com/torch/torch7/issues/1146 )
 RUN sed -i 's/python-software-properties/software-properties-common/g' /home/torch/install-deps
-# This tends to print too many warnings for the logging so lets just try and squash them
+ENV TORCH_NVCC_FLAGS="-D__CUDA_NO_HALF_OPERATORS__"
 RUN cd /home/torch && ./clean.sh && bash install-deps && ./install.sh -b
 
 ENV LUA_PATH='/home/.luarocks/share/lua/5.1/?.lua;/home/.luarocks/share/lua/5.1/?/init.lua;/home/torch/install/share/lua/5.1/?.lua;/home/torch/install/share/lua/5.1/?/init.lua;./?.lua;/home/torch/install/share/luajit-2.1.0-beta1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua'
