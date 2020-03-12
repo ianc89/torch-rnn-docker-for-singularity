@@ -27,29 +27,30 @@ ENV TORCH_NVCC_FLAGS='-D__CUDA_NO_HALF_OPERATORS__'
 
 # Fix torch installation 1 ( https://github.com/torch/cutorch/issues/834 )
 RUN apt-get purge cmake
-RUN git clone https://github.com/Kitware/CMake.git /root/cmake
-RUN cd /root/cmake && ./bootstrap && make && sudo make install
+RUN git clone https://github.com/Kitware/CMake.git /home/cmake
+RUN mkdir /home/bin
+RUN cd /home/cmake && ./bootstrap --prefix=/home/bin && make && sudo make install
 
 
 # Torch and luarocks
-RUN git clone https://github.com/torch/distro.git /root/torch --recursive
+RUN git clone https://github.com/torch/distro.git /home/torch --recursive
 # Fix torch installation 2
-RUN rm -fr /root/torch/cmake/3.6/Modules/FindCUDA*
-COPY atomic.patch /root/torch/extra/cutorch/atomic.patch
-RUN cat /root/torch/extra/cutorch/atomic.patch
-RUN cd /root/torch/extra/cutorch/ && patch -p1 < /root/torch/extra/cutorch/atomic.patch
+RUN rm -fr /home/torch/cmake/3.6/Modules/FindCUDA*
+COPY atomic.patch /home/torch/extra/cutorch/atomic.patch
+RUN cat /home/torch/extra/cutorch/atomic.patch
+RUN cd /home/torch/extra/cutorch/ && patch -p1 < /home/torch/extra/cutorch/atomic.patch
 # Fix error in ubuntu 18.04 ( https://github.com/torch/torch7/issues/1146 )
-RUN sed -i 's/python-software-properties/software-properties-common/g' /root/torch/install-deps
+RUN sed -i 's/python-software-properties/software-properties-common/g' /home/torch/install-deps
 # This tends to print too many warnings for the logging so lets just try and squash them
-RUN cd /root/torch && ./clean.sh && bash install-deps && ./install.sh -b >/dev/null 2>&1
+RUN cd /home/torch && ./clean.sh && bash install-deps && ./install.sh -b >/dev/null 2>&1
 
 
-ENV LUA_PATH='/root/.luarocks/share/lua/5.1/?.lua;/root/.luarocks/share/lua/5.1/?/init.lua;/root/torch/install/share/lua/5.1/?.lua;/root/torch/install/share/lua/5.1/?/init.lua;./?.lua;/root/torch/install/share/luajit-2.1.0-beta1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua'
-ENV LUA_CPATH='/root/.luarocks/lib/lua/5.1/?.so;/root/torch/install/lib/lua/5.1/?.so;./?.so;/usr/local/lib/lua/5.1/?.so;/usr/local/lib/lua/5.1/loadall.so'
-ENV PATH=/root/torch/install/bin:$PATH
-ENV LD_LIBRARY_PATH=/root/torch/install/lib:$LD_LIBRARY_PATH
-ENV DYLD_LIBRARY_PATH=/root/torch/install/lib:$DYLD_LIBRARY_PATH
-ENV LUA_CPATH='/root/torch/install/lib/?.so;'$LUA_CPATH
+ENV LUA_PATH='/home/.luarocks/share/lua/5.1/?.lua;/home/.luarocks/share/lua/5.1/?/init.lua;/home/torch/install/share/lua/5.1/?.lua;/home/torch/install/share/lua/5.1/?/init.lua;./?.lua;/home/torch/install/share/luajit-2.1.0-beta1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua'
+ENV LUA_CPATH='/home/.luarocks/lib/lua/5.1/?.so;/home/torch/install/lib/lua/5.1/?.so;./?.so;/usr/local/lib/lua/5.1/?.so;/usr/local/lib/lua/5.1/loadall.so'
+ENV PATH=/home/torch/install/bin:$PATH
+ENV LD_LIBRARY_PATH=/home/torch/install/lib:$LD_LIBRARY_PATH
+ENV DYLD_LIBRARY_PATH=/home/torch/install/lib:$DYLD_LIBRARY_PATH
+ENV LUA_CPATH='/home/torch/install/lib/?.so;'$LUA_CPATH
 
 #torch-rnn and python requirements
 WORKDIR /home
@@ -59,14 +60,14 @@ WORKDIR /home
 # Fix install torch-rnn requirements in Ubuntu 16.04
 # https://github.com/crisbal/docker-torch-rnn/issues/1#issuecomment-324262348
 RUN apt-get install -y cython
-RUN pip install --upgrade pip
+RUN pip install --user --upgrade pip
 # Fix cython version for ubuntu 18.04
-RUN pip install Cython==0.26.1
-RUN pip install numpy==1.10.4
-RUN pip install argparse==1.2.1
+RUN pip install --user Cython==0.26.1
+RUN pip install --user numpy==1.10.4
+RUN pip install --user argparse==1.2.1
 # Fix run preprocess in ubuntu 18.04
-RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial/ pip install h5py==2.6.0
-RUN pip install six==1.10.0
+RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial/ pip install --user h5py==2.6.0
+RUN pip install --user six==1.10.0
 RUN git clone https://github.com/jcjohnson/torch-rnn
 
 #Lua requirements
@@ -86,7 +87,7 @@ RUN luarocks make hdf5-0-0.rockspec
 #CUDA
 WORKDIR /home
 # Fix torch installation 3
-RUN cd /root/torch/extra/cutorch/ && luarocks make rocks/cutorch-scm-1.rockspec
+RUN cd /home/torch/extra/cutorch/ && luarocks make rocks/cutorch-scm-1.rockspec
 #RUN luarocks install cutorch
 RUN luarocks install cunn
 
