@@ -29,6 +29,7 @@ ENV TORCH_NVCC_FLAGS='-D__CUDA_NO_HALF_OPERATORS__'
 RUN apt-get purge cmake
 RUN git clone https://github.com/Kitware/CMake.git /home/cmake
 RUN mkdir /home/bin
+RUN mkdir /home/python
 RUN cd /home/cmake && ./bootstrap --prefix=/home/bin && make && sudo make install
 
 
@@ -51,6 +52,7 @@ ENV PATH=/home/torch/install/bin:$PATH
 ENV LD_LIBRARY_PATH=/home/torch/install/lib:$LD_LIBRARY_PATH
 ENV DYLD_LIBRARY_PATH=/home/torch/install/lib:$DYLD_LIBRARY_PATH
 ENV LUA_CPATH='/home/torch/install/lib/?.so;'$LUA_CPATH
+ENV PYTHONPATH=/home/python/:$PYTHONPATH
 
 #torch-rnn and python requirements
 WORKDIR /home
@@ -60,14 +62,14 @@ WORKDIR /home
 # Fix install torch-rnn requirements in Ubuntu 16.04
 # https://github.com/crisbal/docker-torch-rnn/issues/1#issuecomment-324262348
 RUN apt-get install -y cython
-RUN pip install --user --upgrade pip
+RUN pip install -t /home/python/ --upgrade pip
 # Fix cython version for ubuntu 18.04
-RUN pip install --user Cython==0.26.1
-RUN pip install --user numpy==1.10.4
-RUN pip install --user argparse==1.2.1
+RUN pip install -t /home/python/ Cython==0.26.1
+RUN pip install -t /home/python/ numpy==1.10.4
+RUN pip install -t /home/python/ argparse==1.2.1
 # Fix run preprocess in ubuntu 18.04
-RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial/ pip install --user h5py==2.6.0
-RUN pip install --user six==1.10.0
+RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial/ pip install -t /home/python/ h5py==2.6.0
+RUN pip install -t /home/python/ six==1.10.0
 RUN git clone https://github.com/jcjohnson/torch-rnn
 
 #Lua requirements
