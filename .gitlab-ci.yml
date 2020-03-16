@@ -11,3 +11,16 @@ build_image:
     TO: gitlab-registry.cern.ch/iconnell/torch-rnn-docker-for-singularity
     DOCKER_FILE: Dockerfile
 
+build_image_tag:
+  stage: docker
+  tags:
+    - docker-image-build
+  only:
+    - tags
+  script:
+    - echo "Building tag image"
+  variables:
+    #TO: gitlab-registry.cern.ch/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/tags:${CI_COMMIT_TAG}
+    TO: gitlab-registry.cern.ch/iconnell/torch-rnn-docker-for-singularity/tags:${CI_COMMIT_TAG}
+    DOCKER_FILE: Dockerfile
+
