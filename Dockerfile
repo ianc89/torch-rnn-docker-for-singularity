@@ -1,5 +1,6 @@
 FROM nvidia/cuda:10.0-devel-ubuntu18.04
-MAINTAINER Cristian Baldi "bld.cris.96@gmail.com"
+MAINTAINER Ian Connelly "ian.connelly gmail"
+# Based on docker image by Cristian Baldi "bld.cris.96@gmail.com"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN true
@@ -70,6 +71,9 @@ RUN pip install -t /home/python/ argparse==1.2.1
 # Fix run preprocess in ubuntu 18.04
 RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial/ pip install -t /home/python/ h5py==2.6.0
 RUN pip install -t /home/python/ six==1.10.0
+RUN pip install -t /home/python/ requests
+RUN pip install -t /home/python/ pillow
+RUN pip install -t /home/python/ shlex
 RUN git clone https://github.com/jcjohnson/torch-rnn
 
 #Lua requirements
