@@ -73,7 +73,6 @@ RUN HDF5_DIR=/usr/lib/x86_64-linux-gnu/hdf5/serial/ pip install -t /home/python/
 RUN pip install -t /home/python/ six==1.10.0
 RUN pip install -t /home/python/ requests
 RUN pip install -t /home/python/ pillow
-RUN pip install -t /home/python/ shlex
 RUN git clone https://github.com/jcjohnson/torch-rnn
 
 #Lua requirements
